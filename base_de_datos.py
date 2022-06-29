@@ -17,16 +17,16 @@ def Ejecutarconexion ():
         micursor.execute("CREATE TABLE IF NOT EXISTS Clientes ( RUT_cliente INT(11)  PRIMARY KEY, Nombre_cliente VARCHAR(30) NOT NULL, Email VARCHAR(30), Telefono INT(9))")
         messagebox.showinfo("mensaje","La Tabla clientes se ha creado correctamente")
         # creartabla habitaciones
-        micursor.execute("CREATE TABLE IF NOT EXISTS habitaciones ( Numero_habitacion INT(5)PRIMARY KEY  NOT NULL, Estado_habitacion VARCHAR(30), Capacidad VARCHAR(15),Precio INT(7))")
+        micursor.execute("CREATE TABLE IF NOT EXISTS habitaciones ( Numero_habitacion INT PRIMARY KEY AUTO_INCREMENT NOT NULL, Estado_habitacion VARCHAR(30), Capacidad VARCHAR(15),Precio INT(7))")
         messagebox.showinfo("mensaje","La Tabla habitaciones se ha creado correctamente")
         #crear tabla encargados
         micursor.execute("CREATE TABLE IF NOT EXISTS Encagados ( RUT_encargado INT(11) PRIMARY KEY, Nombre_encargado VARCHAR(30) NOT NULL, Email VARCHAR(30), Telefono INT(9))")
         messagebox.showinfo("mensaje","La Tabla encargados se ha creado correctamente")
         #crear tabla empleados
-        micursor.execute("CREATE TABLE IF NOT EXISTS Empleados ( RUT_empleado INT(11) PRIMARY KEY, Nombre_empleado VARCHAR(30) NOT NULL, Email VARCHAR(30), Telefono INT(9))")
+        micursor.execute("CREATE TABLE IF NOT EXISTS Empleados (  ID_Empleado INT PRIMARY KEY AUTO_INCREMENT NOT NULL, RUT_empleado INT(11), Nombre_empleado VARCHAR(30) NOT NULL, Email VARCHAR(30), Telefono INT(9))")
         messagebox.showinfo("mensaje","La Tabla empleados se ha creado correctamente")
         # se crea tabla reservas con sus repectivos FOREING KEY
-        micursor.execute("CREATE TABLE IF NOT EXISTS Reservas ( ID_reserva INT(11) PRIMARY KEY, RUT_cliente INT(11) , Numero_habitacion INT(5), RUT_empleado INT(11) ,fecha date, FOREIGN KEY (RUT_cliente) REFERENCES Clientes(RUT_cliente), FOREIGN KEY (Numero_habitacion) REFERENCES Habitaciones(Numero_habitacion ), FOREIGN KEY (RUT_empleado) REFERENCES Empleados(RUT_empleado))")
+        micursor.execute("CREATE TABLE IF NOT EXISTS Reservas ( ID_reserva INT PRIMARY KEY AUTO_INCREMENT NOT NULL, RUT_cliente INT(11) , Numero_habitacion INT(5), ID_empleado INT ,fecha date, FOREIGN KEY (RUT_cliente) REFERENCES Clientes(RUT_cliente), FOREIGN KEY (Numero_habitacion) REFERENCES Habitaciones(Numero_habitacion ), FOREIGN KEY (ID_empleado) REFERENCES Empleados(ID_empleado))")
         messagebox.showinfo("mensaje","La Tabla reservas se ha creado correctamente")
         #tabla hospedados
         micursor.execute("CREATE TABLE IF NOT EXISTS Hospedado ( ID_hospedado INT(11) PRIMARY KEY, ID_reserva INT(11), RUT_cliente INT(11), FOREIGN KEY (ID_reserva) REFERENCES Reservas(ID_reserva), FOREIGN KEY (RUT_cliente) REFERENCES Clientes(RUT_cliente))")
@@ -36,3 +36,4 @@ def Ejecutarconexion ():
     except:
         messagebox.showinfo("mensaje","Por favor revise si la base de datos HOTELDUERMEBIEN y las Tablas ya Existen ")
 
+Ejecutarconexion()
