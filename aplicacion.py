@@ -1,11 +1,15 @@
+from cProfile import label
 from msilib.schema import TextStyle
 from pydoc import text
 from re import A
-import tkinter 
+import tkinter
+from tokenize import Name
+from unicodedata import name 
 import pymysql
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
+
 
 db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
 cursor = db.cursor()
@@ -55,7 +59,9 @@ def registarClientes():
         ventanaRegCliente = Toplevel()
         ventanaRegCliente.title("Registro clientes")
         ventanaRegCliente.geometry("550x370")
-        lbl_img = tkinter.Label(ventanaRegCliente, image=iconImg).place()
+        ventana.configure(background="white")
+        
+        lbl_img = tkinter.Label(ventanaRegCliente).place()
 
         rutCliente = tk.Label(ventanaRegCliente, text="Ingrese RUT cliente", bg="gray", fg="white")
         rutCliente.place(x=70, y=80, width=160, height=30)
@@ -100,6 +106,8 @@ def RegistrarEmpleados():
     ventana2.geometry("500x600")
     ventana2.configure(background="white")
     
+    
+   
     #Entradas RegistrarEmpleado
     etiqueta0 = tk.Label(ventana2, text="Rut Empleado", bg="gray", fg="white")
     etiqueta0.place(x=305, y=300, width=160, height=30)
@@ -157,11 +165,11 @@ ventana.configure(background="white")
 
 #Imagenes logos !
 
-iconImg = tkinter.PhotoImage(file="img\iconLogo.png")
+iconImg = tkinter.PhotoImage(file="img\imgLogin\iconLogo.png")
 lbl_img = tkinter.Label(ventana, image=iconImg).place(y=-85, x=-15)
-iconTilte = tkinter.PhotoImage(file="img\iconTitle.png")
+iconTilte = tkinter.PhotoImage(file="img\imgLogin\iconTitle.png")
 lbl_Title = tkinter.Label(ventana, image=iconTilte).place(y=15, x=2)   
-iconLogin = tkinter.PhotoImage(file="img\iconLogin.png")
+iconLogin = tkinter.PhotoImage(file="img\imgLogin\iconLogin.png")
 lbl_Login = tkinter.Label(ventana, image=iconLogin).place(y=448, x=110)
 
 #Entradas Inicio
@@ -185,8 +193,7 @@ btnRegistrarEmpleado.place(x=150, y=485, width=200, height=30)
 
 #insertar en otra ventana o donde sea convenientes es solo de pruebas
 """btnRegistrarCliente = tk.Button(ventana, text="Registar Cliente", fg="black", bg="green",command=registarClientes)
-btnRegistrarCliente.place(x=150, y=490, width=200, height=30)"""
-
-
+btnRegistrarCliente.place(x=150, y=490, width=200, height=30)
+"""
 ventana.mainloop()
 
