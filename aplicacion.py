@@ -1,4 +1,5 @@
 from cProfile import label
+from curses.panel import top_panel
 from msilib.schema import TextStyle
 from pydoc import text
 from re import A
@@ -106,8 +107,10 @@ def RegistrarEmpleados():
     ventana2.geometry("500x600")
     ventana2.configure(background="white")
     
+    #Necesito insertar imagenes en esta funcion (RegistrarEmpleados) pero tira diferentes tipos de errores
+    #ya que tkinter a mi alparecer es muy webiao y le pone color por tratar de pensar 2 cosas diferentes
+    #Como guia pueden usar las lineas de codigo 171-176. 
     
-   
     #Entradas RegistrarEmpleado
     etiqueta0 = tk.Label(ventana2, text="Rut Empleado", bg="gray", fg="white")
     etiqueta0.place(x=305, y=300, width=160, height=30)
