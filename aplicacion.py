@@ -5,7 +5,6 @@ from multiprocessing import connection
 from pydoc import text
 from re import A
 import sqlite3
-import string
 import tkinter
 from tokenize import Name
 from unicodedata import name
@@ -15,7 +14,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-import random
+import random, string
 
 db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
 cursor = db.cursor()
@@ -106,6 +105,16 @@ def registarClientes():
         btnRegresar = tk.Button(ventanaRegCliente, text="Regresar", fg="black", bg="green",command=ventanaRegCliente.destroy)
         btnRegresar.place(x=240, y=280, width=200, height=30)
    
+def generarIdEmpleado(text):
+    
+    ID = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
+    return ID
+
+def generarContraseñaEmpleado(text):
+    
+    contraseña = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
+    return contraseña
+    
 
 
 def RegistrarEmpleados():
@@ -119,43 +128,70 @@ def RegistrarEmpleados():
     #Como guia pueden usar las lineas de codigo 171-176. 
     
     #Entradas RegistrarEmpleado
-    etiqueta0 = tk.Label(ventana2, text="Rut Empleado", bg="gray", fg="white")
-    etiqueta0.place(x=305, y=300, width=160, height=30)
-    entrada0 = tk.Entry(ventana2)
-    entrada0.place(x=280, y=340, width=200, height=30)
     
-    etiqueta1 = tk.Label(ventana2, text="Nombre Empleado", bg="gray", fg="white")
-    etiqueta1.place(x=45, y=300, width=160, height=30)
+    
+    entrada0 = tk.Entry(ventana2) #ID GENERADA
+     
+       
+    
+    entrada5 = tk.Entry(ventana2) #CONTRASEÑA GENERADA
+    
+    
+    
+    etiqueta1 = tk.Label(ventana2, text="Rut Empleado", bg="gray", fg="white")
+    etiqueta1.place(x=305, y=300, width=160, height=30)
     entrada1 = tk.Entry(ventana2)
-    entrada1.place(x=20, y=340, width=200, height=30)
+    entrada1.place(x=280, y=340, width=200, height=30)
     
-    etiqueta2 = tk.Label(ventana2, text="Email", bg="gray", fg="white")
-    etiqueta2.place(x=45, y=410, width=160, height=30)
+    etiqueta2 = tk.Label(ventana2, text="Nombre Empleado", bg="gray", fg="white")
+    etiqueta2.place(x=45, y=300, width=160, height=30)
     entrada2 = tk.Entry(ventana2)
-    entrada2.place(x=20, y=450, width=200, height=30)
-    
-    etiqueta3 = tk.Label(ventana2, text="Telefono", bg="gray", fg="white")
-    etiqueta3.place(x=305, y=410, width=160, height=30)
+    entrada2.place(x=20, y=340, width=200, height=30)
+
+    etiqueta3 = tk.Label(ventana2, text="Email", bg="gray", fg="white")
+    etiqueta3.place(x=45, y=410, width=160, height=30)
     entrada3 = tk.Entry(ventana2)
-    entrada3.place(x=280, y=450, width=200, height=30)
+    entrada3.place(x=20, y=450, width=200, height=30)
+    
+    etiqueta4 = tk.Label(ventana2, text="Telefono", bg="gray", fg="white")
+    etiqueta4.place(x=305, y=410, width=160, height=30)
+    entrada4 = tk.Entry(ventana2)
+    entrada4.place(x=280, y=450, width=200, height=30)
+    
+    
     
     
     def Registar():
-        empleado1 = empleados(entrada0.get(), entrada1.get(), entrada2.get(), entrada3.get())
-        insertarEmpleado = "INSERT INTO empleados(RUT_EMPLEADO, Nombre_empleado, Email, Telefono) VALUES ('{0}','{1}','{2}','{3}')".format(empleado1.RUT_empleado, empleado1.Nombre_empleado, empleado1.Email, empleado1.Telefono)
+        empleado1 = empleados(entrada1.get(), entrada2.get(), entrada3.get(), entrada4.get())
+        id_empleado = generarIdEmpleado(entrada0.get())
+        contraseña_empleado = generarContraseñaEmpleado(entrada5.get())
+        insertarEmpleado = "INSERT INTO empleados(ID_Empleado, RUT_EMPLEADO, Nombre_empleado, Email, Telefono, Contraseña) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}')".format(id_empleado, empleado1.RUT_empleado, empleado1.Nombre_empleado, empleado1.Email, empleado1.Telefono, contraseña_empleado)
+        datosLogeo = "SELECT ID_EMPLEADO, Contraseña FROM empleados"
         try:
             cursor.execute(insertarEmpleado)
             db.commit()
             messagebox.showinfo(message="Registro exitoso", title="Aviso")
+            
+            etiqueta0 = tk.Label(ventana2, text="ID", bg="gray", fg="white")
+            etiqueta0.place(x=45, y=100, width=160, height=30)
+            entrada0.place(x=20, y=140, width=200, height=30)
+            
+            etiqueta5 = tk.Label(ventana2, text="Contraseña", bg="gray", fg="white")
+            etiqueta5.place(x=305, y=100, width=160, height=30)
+            entrada5.place(x=280, y=140, width=200, height=3)
+            
             entrada0.delete(0, 'end')
             entrada1.delete(1, 'end')
             entrada2.delete(2, 'end')
             entrada3.delete(3, 'end')
+            entrada4.delete(4, 'end')
+            entrada5.delete(5, 'end')
             db.close
         except:
             db.rollback
             messagebox.showinfo(message="No se pudo registrar empleado", title="Aviso")
             db.close
+            
 
         
             
@@ -164,7 +200,6 @@ def RegistrarEmpleados():
     btnRegistrar.place(x=135, y=500, width=200, height=30)
     
     ventana2.mainloop()
-
 
 
 def regitrarHabitaciones():
