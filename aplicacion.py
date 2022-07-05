@@ -15,6 +15,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
+import random
 
 db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
 cursor = db.cursor()
@@ -57,6 +58,8 @@ class reservas:
         self.Numero_habitacion = Numero_habitacion
         self.RUT_empleado = RUT_empleado
         self.fecha = fecha
+        
+
 
 #abre ventana para poder registrar clientes nuevos
 def registarClientes():
@@ -153,6 +156,8 @@ def RegistrarEmpleados():
             db.rollback
             messagebox.showinfo(message="No se pudo registrar empleado", title="Aviso")
             db.close
+
+        
             
     #Boton para registrar empleado nuevo
     btnRegistrar = tk.Button(ventana2, text="Registrar", fg="black",bg="green" , command=Registar)
