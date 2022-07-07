@@ -105,16 +105,7 @@ def registarClientes():
         btnRegresar = tk.Button(ventanaRegCliente, text="Regresar", fg="black", bg="green",command=ventanaRegCliente.destroy)
         btnRegresar.place(x=240, y=280, width=200, height=30)
    
-def generarIdEmpleado(text):
-    
-    ID = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
-    return ID
 
-def generarContraseñaEmpleado(text):
-    
-    contraseña = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
-    return contraseña
-    
 
 
 def RegistrarEmpleados():
@@ -123,13 +114,19 @@ def RegistrarEmpleados():
     ventana2.geometry("500x600")
     ventana2.configure(background="white")
     
-    #Necesito insertar imagenes en esta funcion (RegistrarEmpleados) pero tira diferentes tipos de errores
-    #ya que tkinter a mi alparecer es muy webiao y le pone color por tratar de pensar 2 cosas diferentes
-    #Como guia pueden usar las lineas de codigo 171-176. 
     
-    #Entradas RegistrarEmpleado
+    def generarIdEmpleado(text):
+        ID = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
+        return ID
     
     
+    def generarContraseñaEmpleado(text):
+    
+        contraseña = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
+        return contraseña
+    
+          
+
     entrada0 = tk.Entry(ventana2) #ID GENERADA
      
        
@@ -158,7 +155,17 @@ def RegistrarEmpleados():
     entrada4 = tk.Entry(ventana2)
     entrada4.place(x=280, y=450, width=200, height=30)
     
-    
+    def mostrarIdContraseña():
+        db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
+        cursor.execute("SELECT ID_Empleado, Contraseña FROM empleados WHERE ID_Empleado = '"+entrada0.get()+"' AND Contraseña = '"+entrada5.get()+"'")
+        filas = cursor.fetchall()
+        if (len(filas) > 0):
+            for fila in filas:
+                entrada0.insert(0, fila[0])
+                entrada5.insert(0, fila[1])
+                messagebox.showinfo(message="[!] Se ha generado una ID y una Contraseña para hacer ingreso al sistema")
+        else:
+            messagebox.showinfo(message="[X] Vaya algo ha fallado") 
     
     
     def Registar():
@@ -166,33 +173,32 @@ def RegistrarEmpleados():
         id_empleado = generarIdEmpleado(entrada0.get())
         contraseña_empleado = generarContraseñaEmpleado(entrada5.get())
         insertarEmpleado = "INSERT INTO empleados(ID_Empleado, RUT_EMPLEADO, Nombre_empleado, Email, Telefono, Contraseña) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}')".format(id_empleado, empleado1.RUT_empleado, empleado1.Nombre_empleado, empleado1.Email, empleado1.Telefono, contraseña_empleado)
-        datosLogeo = "SELECT ID_EMPLEADO, Contraseña FROM empleados"
+        
+        
         try:
             cursor.execute(insertarEmpleado)
             db.commit()
+            entrada1.delete(0, 'end')
+            entrada2.delete(0, 'end')
+            entrada3.delete(0, 'end')
+            entrada4.delete(0, 'end')
             messagebox.showinfo(message="Registro exitoso", title="Aviso")
-            
+        
             etiqueta0 = tk.Label(ventana2, text="ID", bg="gray", fg="white")
             etiqueta0.place(x=45, y=100, width=160, height=30)
             entrada0.place(x=20, y=140, width=200, height=30)
             
             etiqueta5 = tk.Label(ventana2, text="Contraseña", bg="gray", fg="white")
             etiqueta5.place(x=305, y=100, width=160, height=30)
-            entrada5.place(x=280, y=140, width=200, height=3)
+            entrada5.place(x=280, y=140, width=200, height=30)
             
-            entrada0.delete(0, 'end')
-            entrada1.delete(1, 'end')
-            entrada2.delete(2, 'end')
-            entrada3.delete(3, 'end')
-            entrada4.delete(4, 'end')
-            entrada5.delete(5, 'end')
+            mostrarIdContraseña()
             db.close
         except:
             db.rollback
-            messagebox.showinfo(message="No se pudo registrar empleado", title="Aviso")
+            messagebox.showinfo(message="[X] No se pudo registrar empleado", title="Aviso")
             db.close
-            
-
+        
         
             
     #Boton para registrar empleado nuevo
@@ -200,6 +206,7 @@ def RegistrarEmpleados():
     btnRegistrar.place(x=135, y=500, width=200, height=30)
     
     ventana2.mainloop()
+
 
 
 def regitrarHabitaciones():
@@ -314,6 +321,43 @@ def regitrarHabitaciones():
         #se ejecuta para actualizar la tabla
         rellenarTabla()
 
+def login():
+    ventanaLogin = tk.Tk()
+    ventanaLogin.title("Login Hotel")
+    ventanaLogin.geometry("500x580")
+    ventanaLogin.configure(background="white")
+
+    db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
+    
+    
+    #Entradas Login
+    idEmpleado = tk.Label(ventanaLogin, text="Ingrese ID Empleado", bg="gray", fg="white")
+    idEmpleado.place(x=170, y=250, width=160, height=30)
+    entradaId = tk.Entry(ventanaLogin)
+    entradaId.place(x=150, y=290, width=200, height=30)
+        
+    contraseña = tk.Label(ventanaLogin, text="Ingrese Contraseña", bg="gray", fg="white")
+    contraseña.place(x=170, y=340, width=160, height=30)
+    entradaContraseña = tk.Entry(ventanaLogin)
+    entradaContraseña.place(x=150, y=380, width=200, height=30)
+    
+    def verificarDatos():
+        id_verify = entradaId.get()
+        contraseña_verify = entradaContraseña.get()
+        cursor.execute("SELECT * FROM empleados WHERE ID_Empleado = '"+id_verify+"' AND Contraseña = '"+contraseña_verify+"' ")
+        if cursor.fetchall():
+            messagebox.showinfo(title="Login Correcto", message="[!] ID_Empleado y contraseña correctas")
+        else:
+            messagebox.showerror(title="Login Incorrecto", message="[X] ID_Empleado y contraseña Incorrecta !")
+        cursor.close()
+        
+    btnLogin = tk.Button(ventanaLogin, text="Logearse",fg="black", bg="green",command=verificarDatos)
+    btnLogin.place(x=150, y=485, width=200, height=30)
+    
+    
+    
+    ventanaLogin.mainloop()
+    
 
 #Ventana login principal!
 
@@ -325,26 +369,17 @@ ventana.configure(background="white")
 #Imagenes logos !
 
 iconImg = tkinter.PhotoImage(file="img\imgLogin\iconLogo.png")
-lbl_img = tkinter.Label(ventana, image=iconImg).place(y=-85, x=-15)
+lbl_img = tkinter.Label(ventana, image=iconImg).place(y=40, x=-15)
 iconTilte = tkinter.PhotoImage(file="img\imgLogin\iconTitle.png")
 lbl_Title = tkinter.Label(ventana, image=iconTilte).place(y=15, x=2)   
 iconLogin = tkinter.PhotoImage(file="img\imgLogin\iconLogin.png")
 lbl_Login = tkinter.Label(ventana, image=iconLogin).place(y=448, x=110)
 
-#Entradas Inicio
-idEmpleado = tk.Label(ventana, text="Ingrese ID Empleado", bg="gray", fg="white")
-idEmpleado.place(x=170, y=250, width=160, height=30)
-entradaId = tk.Entry(ventana)
-entradaId.place(x=150, y=290, width=200, height=30)
-    
-contraseña = tk.Label(ventana, text="Ingrese Contraseña", bg="gray", fg="white")
-contraseña.place(x=170, y=340, width=160, height=30)
-entradaContraseña = tk.Entry(ventana)
-entradaContraseña.place(x=150, y=380, width=200, height=30)
+
 
 
 #Botones Inicio   
-btnIngresar = tk.Button(ventana, text="Ingresar", fg="black", bg="green",command="")#Falta agregar la accion del command
+btnIngresar = tk.Button(ventana, text="Iniciar sesion", fg="black", bg="green",command=login)#Falta agregar la accion del command
 btnIngresar.place(x=150, y=445, width=200, height=30)
 
 btnRegistrarEmpleado = tk.Button(ventana, text="Registrar Empleado",fg="black", bg="green",command=RegistrarEmpleados)
@@ -359,4 +394,6 @@ btnRegistrarHabitacion = tk.Button(ventana, text="Registar Habitación", fg="bla
 btnRegistrarHabitacion.place(x=150, y=530, width=200, height=30)
 
 ventana.mainloop()
+
+
 
