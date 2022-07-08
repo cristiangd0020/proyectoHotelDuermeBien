@@ -8,7 +8,6 @@ import sqlite3
 import tkinter
 from tokenize import Name
 from unicodedata import name
-from mysqlx import Column 
 import pymysql
 import tkinter as tk
 from tkinter import *
@@ -208,118 +207,152 @@ def RegistrarEmpleados():
     ventana2.mainloop()
 
 
-
+# la funcion mopdificar no me funciona con el toplevel estoy tratando de corregir eso
 def regitrarHabitaciones():
-        ventana.withdraw()
-        ventanaRegHabitaciones = Toplevel()
-        ventanaRegHabitaciones.title("Registro Habitaciones")
-        ventanaRegHabitaciones.geometry("600x500")
+    ventanaHabitaciones=Toplevel()
+    ventanaHabitaciones.title("Registro Habitaciones")
+    ventanaHabitaciones.geometry("600x500")
 
-        marco = LabelFrame(ventanaRegHabitaciones,text="Registro de Habitaciones")
-        marco.place(x=50,y=50,width=500,height=400)
-
-        #variables
-        numero_Habitacion= StringVar()
-        estado_Habitacion= StringVar()
-        capacidad=StringVar()
-        precio=StringVar()
-
-        #Labels
-        lblnumHabitacion =Label(marco,text="Numero Habitacion").grid(column=0, row=0)
-        txtnumHabitacion =Entry(marco, textvariable=numero_Habitacion).grid(column=1,row=0)
-
-        lblestHabitacion =Label(marco,text="Estado Habitacion").grid(column=0, row=1)
-        txtestHabitacion =ttk.Combobox(marco,values=["Disponible","Ocupado"],textvariable=estado_Habitacion)
-        txtestHabitacion.grid(column=1,row=1)
-        txtestHabitacion.current(0)
-
-        lblcapaciHabitacion =Label(marco,text="Capacidad").grid(column=2, row=0)
-        txtcapaciHabitacion =Entry(marco,textvariable=capacidad).grid(column=3,row=0)
-
-        lblprecioHabitacion =Label(marco,text="Precio").grid(column=2, row=1)
-        txtprecioHabitacion =Entry(marco,textvariable=precio).grid(column=3,row=1)
-
-        #mensajes en la ventana
-        lblmensaje = Label(marco, text="aqui van los mensajes", fg="green")
-        lblmensaje.grid(column=0,row=2,columnspan=4)
-
-        #treeview
-        
-        tvHabitaciones= ttk.Treeview(marco)
-        tvHabitaciones.grid(column=0, row=3, columnspan=4)
-        tvHabitaciones["columns"]=("Numero Habitacion","Estado habitacion", "Capacidad", "Precio",)
-        tvHabitaciones.column('#0', width=0, stretch=NO)
-        tvHabitaciones.column('Numero Habitacion', width=150, anchor=CENTER)
-        tvHabitaciones.column('Estado habitacion', width=150, anchor=CENTER)
-        tvHabitaciones.column('Capacidad', width=90, anchor=CENTER)
-        tvHabitaciones.column('Precio', width=90, anchor=CENTER)
-        tvHabitaciones.heading('#0', text="")
-        tvHabitaciones.heading('Numero Habitacion', text='Numero Habitacion', anchor=CENTER )
-        tvHabitaciones.heading('Estado habitacion', text='Estado habitacion', anchor=CENTER )
-        tvHabitaciones.heading('Capacidad',text='Capacidad', anchor=CENTER )
-        tvHabitaciones.heading('Precio',text='Precio', anchor=CENTER)
+    modificar = False
+    num_Habitacion= StringVar()
+    estado_Habitacion= StringVar()
+    capacidad=StringVar()
+    precio=StringVar()
             
-        #Botones      
-        btnRegistrarHabitacion1= tk.Button(marco, text="Eliminar", fg="white", bg="green", command=lambda:eliminar())
-        btnRegistrarHabitacion1.grid(column=0,row=4)
+    def seleccionar(event):
+        num= tvHabitaciones.selection()[0]
+        if int(num)>0:
+            num_Habitacion.set(tvHabitaciones.item(num,"values")[0])
+            estado_Habitacion.set(tvHabitaciones.item(num,"values")[1])
+            capacidad.set(tvHabitaciones.item(num,"values")[2])
+            precio.set(tvHabitaciones.item(num,"values")[3])
 
-        btnRegistroHabitaciones= tk.Button(marco, text="Registrar", fg="white", bg="green",command=lambda:RegistroHabitacion())
-        btnRegistroHabitaciones.grid(column=1,row=4)
+    marco = LabelFrame(ventanaHabitaciones, text="Formulario de gestion Estudiantes")
+    marco.place(x=50,y=50, width=500, height=400)
 
-        btnModificarHabitacion= tk.Button(marco, text="modificar", fg="white", bg="green", command=lambda:actualizar())
-        btnModificarHabitacion.grid(column=2,row=4)
+    #labels entry
+    lblNumHabitacion = Label(marco, text="Numero Habitacion").grid(column=0,row=0 ,pady=5, padx=5)
+    txtNumHabitacion = Entry(marco, textvariable= num_Habitacion)
+    txtNumHabitacion.grid(column=1, row=0)
+    lblEstHabitacion = Label(marco, text="Estado Habitacion").grid(column=0,row=1, pady=5, padx=5)
+    txtEstHabitacion = ttk.Combobox(marco, values=["Disponible","Ocupado"] ,textvariable= estado_Habitacion)
+    txtEstHabitacion.grid(column=1, row=1)
+    txtEstHabitacion.current(0)
+    lblCapacidad = Label(marco, text="Capacidad").grid(column=2,row=0, pady=5, padx=5)
+    txtCapacidad = Entry(marco, textvariable= capacidad)
+    txtCapacidad.grid(column=3, row=0)
+    lblPrecio = Label(marco, text="Precio").grid(column=2,row=1, pady=5, padx=5)
+    txtPrecio = Entry(marco, textvariable= precio)
+    txtPrecio.grid(column=3, row=1)
+    lblmensaje = Label(marco, text="aqui van los mensajes", fg="green")
+    lblmensaje.grid(column=0,row=2,columnspan=4)
 
-        #funciones
-        def vaciar_tabla():
-            filas = tvHabitaciones.get_children()
-            for fila in filas:
-                tvHabitaciones.delete(fila)
-        #antes de rellenar se vacia la tabla primero
-        # 
-        def limpiar():
-            numero_Habitacion.set("")
-            estado_Habitacion.set("")
-            capacidad.set("")
-            precio.set("")
-        
-        def validar():
-            return len(numero_Habitacion.get()) and len(capacidad.get()) and len(precio.get()) 
+    # tabla lista de --
 
-        def rellenarTabla():
-            vaciar_tabla()
-            sql = "select * from habitaciones"
+    tvHabitaciones= ttk.Treeview(marco, selectmode=NONE)
+    tvHabitaciones.grid(column=0, row=3, columnspan=4)
+    tvHabitaciones["columns"]=("Numero Habitacion","Estado habitacion", "Capacidad", "Precio",)
+    tvHabitaciones.column('#0', width=0, stretch=NO)
+    tvHabitaciones.column('Numero Habitacion', width=150, anchor=CENTER)
+    tvHabitaciones.column('Estado habitacion', width=150, anchor=CENTER)
+    tvHabitaciones.column('Capacidad', width=90, anchor=CENTER)
+    tvHabitaciones.column('Precio', width=90, anchor=CENTER)
+    tvHabitaciones.heading('#0', text="")
+    tvHabitaciones.heading('Numero Habitacion', text='Numero Habitacion', anchor=CENTER )
+    tvHabitaciones.heading('Estado habitacion', text='Estado habitacion', anchor=CENTER )
+    tvHabitaciones.heading('Capacidad',text='Capacidad', anchor=CENTER )
+    tvHabitaciones.heading('Precio',text='Precio', anchor=CENTER)
+    tvHabitaciones.bind("<<TreeviewSelect>>",seleccionar)
+
+    # BOTONES DE ACCION
+    btneliminar= Button(marco, text="Eliminar", command=lambda:eliminar())
+    btneliminar.grid(column=1,row=4)
+    btnNuevo= Button(marco, text="Guardar",command=lambda:nuevo())
+    btnNuevo.grid(column=2,row=4)
+    btnModificar= Button(marco, text="Seleccionar", command=lambda:actualizarhabitaciones())
+    btnModificar.grid(column=3,row=4)
+    
+    #funciones
+    def modificarFalse():
+        global modificar
+        modificar = False
+        tvHabitaciones.config(selectmode=NONE)
+        btnNuevo.config(text="Guardar")
+        btnModificar.config(text="Seleccionar")
+        btneliminar.config(state=DISABLED)
+                
+    def modificarTrue():
+        global modificar
+        modificar = True
+        tvHabitaciones.config(selectmode=BROWSE)
+        btnNuevo.config(text="Nuevo")
+        btnModificar.config(text="Modificar")
+        btneliminar.config(state=NORMAL)
+
+    def validar():
+        return len(num_Habitacion.get()) and len(capacidad.get()) and len(precio.get()) 
+
+    def limpiar():
+        num_Habitacion.set("")
+        capacidad.set("")
+        precio.set("")
+      
+    def vaciar_tabla():
+        filas = tvHabitaciones.get_children()
+        for fila in filas:
+            tvHabitaciones.delete(fila)
+
+    def llenarTabla():
+        vaciar_tabla()
+        sql = "select * from habitaciones"
+        cursor.execute(sql)
+        filas=cursor.fetchall()
+        for fila in filas:
+            Num= fila[0]
+            tvHabitaciones.insert("", END, Num, text= Num, values=fila )
+                                 
+    def eliminar():
+        num= tvHabitaciones.selection()[0]
+        if int(id)>0:
+            sql="delete from habitaciones where num_Habitacion="+num
             cursor.execute(sql)
-            filas=cursor.fetchall()
-            for fila in filas:
-                Numero_habitacion = fila[0]
-                tvHabitaciones.insert("", END, Numero_habitacion, text=Numero_habitacion, values=fila )
-        def  eliminar():
-            numero_Habitacion= tvHabitaciones.selection()[0]
-            if int(numero_Habitacion)>0:
-                sql="delete from habitaciones where numero_Habitacion="+numero_Habitacion
-                cursor.execute(sql)
-                db.commit()
-                tvHabitaciones.delete(numero_Habitacion)
-                lblmensaje.config(text="se ha eliminado correctamente")
-            else:
-                lblmensaje(text="Seleccion un registro para eliminar", fg="red")
-            
-        def RegistroHabitacion():
+            db.commit()
+            tvHabitaciones.delete(num)
+            lblmensaje.config(text="se ha eliminado correctamente")
+        else:
+            lblmensaje(text="Seleccione un registro para eliminar", fg="red")
+
+    def nuevo():
+        if modificar==False:
             if validar():
-                element= [numero_Habitacion.get(),estado_Habitacion.get(),capacidad.get(),precio.get()]
-                sql= "INSERT INTO habitaciones (Numero_habitacion, Estado_habitacion, Capacidad, Precio) VALUES ('{}','{}','{}','{}')".format(element[0],element[1],element[2],element[3])
+                val= [num_Habitacion.get(),estado_Habitacion.get(),capacidad.get(),precio.get()]
+                sql= "INSERT INTO habitaciones (Numero_habitacion, Estado_habitacion, Capacidad, Precio) VALUES ('{}','{}','{}','{}')".format(val[0],val[1],val[2],val[3])
                 cursor.execute(sql)
                 db.commit()
-                lblmensaje.config(text="Se ha guardado el registro correctamente", fg="green")
-                rellenarTabla()
+                lblmensaje.config(text="Se ha guardado un registro correctamente", fg="green")
+                llenarTabla()
                 limpiar()
             else:
-                lblmensaje.config(text="los campos no deben estar vacios", fg="red")
+                lblmensaje.config(text="Los campos no deben estar vacios", fg="red")
+        else:
+            modificarFalse()
+        
+    def actualizarhabitaciones():
+        if modificar==True:
+            if validar():
+                sql= "UPDATE habitaciones SET Estado_habitacion='"+txtEstHabitacion.get()+"', Capacidad='"+txtCapacidad.get()+"', Precio='"+txtPrecio.get()+"' WHERE Numero_habitacion="+num_Habitacion.get()
+                cursor.execute(sql)
+                db.commit()
+                lblmensaje.config(text="Se ha actualizado correctamente", fg="green")
+                llenarTabla()
+                limpiar()
+            else:
+                lblmensaje.config(text="Los campos no deben estar vacios", fg="red")
+        else:
+            modificarTrue()
+    llenarTabla()
+    ventanaHabitaciones.mainloop()
 
-        def actualizar():
-            pass
-        #se ejecuta para actualizar la tabla
-        rellenarTabla()
 
 def login():
     ventanaLogin = tk.Tk()
