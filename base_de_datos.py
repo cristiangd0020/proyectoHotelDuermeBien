@@ -20,7 +20,7 @@ def Ejecutarconexion ():
         micursor.execute("CREATE TABLE IF NOT EXISTS habitaciones ( Numero_habitacion INT PRIMARY KEY AUTO_INCREMENT NOT NULL, Estado_habitacion VARCHAR(30), Capacidad VARCHAR(15),Precio INT(7))")
         messagebox.showinfo("mensaje","La Tabla habitaciones se ha creado correctamente")
         #crear tabla encargados
-        micursor.execute("CREATE TABLE IF NOT EXISTS Encagados ( RUT_encargado INT(11) PRIMARY KEY, Nombre_encargado VARCHAR(30) NOT NULL, Email VARCHAR(30), Telefono INT(9))")
+        micursor.execute("CREATE TABLE IF NOT EXISTS Encargados ( RUT_encargado INT(11) PRIMARY KEY, Nombre_encargado VARCHAR(30) NOT NULL, Email VARCHAR(30), Telefono INT(9))")
         messagebox.showinfo("mensaje","La Tabla encargados se ha creado correctamente")
         #crear tabla empleados
         micursor.execute("CREATE TABLE IF NOT EXISTS Empleados (  ID_Empleado VARCHAR(5) PRIMARY KEY  NOT NULL, RUT_empleado INT(11), Nombre_empleado VARCHAR(30) NOT NULL, Email VARCHAR(30), Telefono INT(9), Contraseña VARCHAR(5))")
