@@ -24,6 +24,7 @@ def Ejecutarconexion ():
         messagebox.showinfo("mensaje","La Tabla encargados se ha creado correctamente")
         #crear tabla empleados
         micursor.execute("CREATE TABLE IF NOT EXISTS Empleados (  ID_Empleado VARCHAR(5) PRIMARY KEY  NOT NULL, RUT_empleado INT(11), Nombre_empleado VARCHAR(30) NOT NULL, Email VARCHAR(30), Telefono INT(9), Contraseña VARCHAR(5))")
+        micursor.execute("INSERT INTO empleados(ID_Empleado, RUT_EMPLEADO, Nombre_empleado, Telefono, Contraseña) VALUES ('ADMIN','0123456789','Admin','0','12345')")
         messagebox.showinfo("mensaje","La Tabla empleados se ha creado correctamente")
         # se crea tabla reservas con sus repectivos FOREING KEY
         micursor.execute("CREATE TABLE IF NOT EXISTS Reservas ( ID_reserva INT PRIMARY KEY AUTO_INCREMENT NOT NULL, RUT_cliente INT(11) , Numero_habitacion INT(5), ID_empleado VARCHAR(5) ,fecha date, FOREIGN KEY (RUT_cliente) REFERENCES Clientes(RUT_cliente), FOREIGN KEY (Numero_habitacion) REFERENCES Habitaciones(Numero_habitacion ), FOREIGN KEY (ID_empleado) REFERENCES Empleados(ID_empleado))")

@@ -1,4 +1,5 @@
 from cProfile import label
+from distutils.util import execute
 #from curses.panel import top_panel
 from msilib.schema import TextStyle
 from multiprocessing import connection
@@ -61,6 +62,7 @@ class reservas:
 
 #abre ventana para poder registrar clientes nuevos
 def registarClientes():
+        ventana = tk.Tk()
         ventana.withdraw()
         ventanaRegCliente = Toplevel()
         ventanaRegCliente.title("Registro clientes")
@@ -354,79 +356,74 @@ def regitrarHabitaciones():
     ventanaHabitaciones.mainloop()
 
 
-def login():
-    ventanaLogin = tk.Tk()
-    ventanaLogin.title("Login Hotel")
-    ventanaLogin.geometry("500x580")
-    ventanaLogin.configure(background="white")
-
-    db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
-    
-    
-    #Entradas Login
-    idEmpleado = tk.Label(ventanaLogin, text="Ingrese ID Empleado", bg="gray", fg="white")
-    idEmpleado.place(x=170, y=250, width=160, height=30)
-    entradaId = tk.Entry(ventanaLogin)
-    entradaId.place(x=150, y=290, width=200, height=30)
-        
-    contraseña = tk.Label(ventanaLogin, text="Ingrese Contraseña", bg="gray", fg="white")
-    contraseña.place(x=170, y=340, width=160, height=30)
-    entradaContraseña = tk.Entry(ventanaLogin)
-    entradaContraseña.place(x=150, y=380, width=200, height=30)
-    
-    def verificarDatos():
-        id_verify = entradaId.get()
-        contraseña_verify = entradaContraseña.get()
-        cursor.execute("SELECT * FROM empleados WHERE ID_Empleado = '"+id_verify+"' AND Contraseña = '"+contraseña_verify+"' ")
-        if cursor.fetchall():
-            messagebox.showinfo(title="Login Correcto", message="[!] ID_Empleado y contraseña correctas")
-        else:
-            messagebox.showerror(title="Login Incorrecto", message="[X] ID_Empleado y contraseña Incorrecta !")
-        cursor.close()
-        
-    btnLogin = tk.Button(ventanaLogin, text="Logearse",fg="black", bg="green",command=verificarDatos)
-    btnLogin.place(x=150, y=485, width=200, height=30)
-    
-    
-    
-    ventanaLogin.mainloop()
-    
-
 #Ventana login principal!
+def app():
+    ventana = tk.Tk()
+    ventana.title("Hotel")
+    ventana.geometry("500x150")
+    ventana.configure(background="white")
+    #Imagenes logos !
+  
+    #iconImg = tkinter.PhotoImage(file="img\imgLogin\iconLogo.png")
+    #lbl_img = tkinter.Label(ventana, image=iconImg).place(y=40, x=-15)
+    #iconTilte = tkinter.PhotoImage(file="img\imgLogin\iconTitle.png")
+    #lbl_Title = tkinter.Label(ventana, image=iconTilte).place(y=15, x=2)   
+    #iconLogin = tkinter.PhotoImage(file="img\imgLogin\iconLogin.png")
+    #lbl_Login = tkinter.Label(ventana, image=iconLogin).place(y=448, x=110)
 
-ventana = tk.Tk()
-ventana.title("Login Hotel")
-ventana.geometry("500x580")
-ventana.configure(background="white")
+    #Botones Inicio   
+    #btnIngresar = tk.Button(ventana, text="Iniciar sesion", fg="black", bg="green",command=login)#Falta agregar la accion del command
+    #btnIngresar.place(x=150, y=445, width=200, height=30)
 
-#Imagenes logos !
+    btnRegistrarEmpleado = tk.Button(ventana, text="Registrar Empleado",fg="black", bg="green",command=RegistrarEmpleados)
+    btnRegistrarEmpleado.place(x=150, y=30, width=200, height=30)
+
+    #insertar en otra ventana o donde sea convenientes es solo de pruebas
+    btnRegistrarCliente = tk.Button(ventana, text="Registar Cliente", fg="black", bg="green",command=registarClientes)
+    btnRegistrarCliente.place(x=150, y=70, width=200, height=30)
+
+    # se agrega el boton de registrar habitacion de momento lo pondré aqui para hacer las pruebas correspondientes
+    btnRegistrarHabitacion = tk.Button(ventana, text="Registar Habitación", fg="black", bg="green",command=regitrarHabitaciones)
+    btnRegistrarHabitacion.place(x=150, y=110, width=200, height=30)
+
+    ventana.mainloop()
+
+
+ventanaLogin = tk.Tk()
+ventanaLogin.title("Login Hotel")
+ventanaLogin.geometry("500x640")
+ventanaLogin.configure(background="white")
+db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
 
 iconImg = tkinter.PhotoImage(file="img\imgLogin\iconLogo.png")
-lbl_img = tkinter.Label(ventana, image=iconImg).place(y=40, x=-15)
+lbl_img = tkinter.Label(ventanaLogin, image=iconImg).place(y=0, x=-15)
 iconTilte = tkinter.PhotoImage(file="img\imgLogin\iconTitle.png")
-lbl_Title = tkinter.Label(ventana, image=iconTilte).place(y=15, x=2)   
-iconLogin = tkinter.PhotoImage(file="img\imgLogin\iconLogin.png")
-lbl_Login = tkinter.Label(ventana, image=iconLogin).place(y=448, x=110)
+lbl_Title = tkinter.Label(ventanaLogin, image=iconTilte).place(y=0, x=2)   
 
+#Entradas Login
+idEmpleado = tk.Label(ventanaLogin, text="Ingrese ID Empleado", bg="grey", fg="black")
+idEmpleado.place(x=170, y=430, width=160, height=30)
+entradaId = tk.Entry(ventanaLogin)
+entradaId.place(x=150, y=470, width=200, height=30)
+    
+contraseña = tk.Label(ventanaLogin, text="Ingrese Contraseña", bg="grey", fg="black")
+contraseña.place(x=170, y=510, width=160, height=30)
+entradaContraseña = tk.Entry(ventanaLogin)
+entradaContraseña.place(x=150, y=550, width=200, height=30)
 
+def verificarDatos():
+    id_verify = entradaId.get()
+    contraseña_verify = entradaContraseña.get()
+    cursor.execute("SELECT * FROM empleados WHERE ID_Empleado = '"+id_verify+"' AND Contraseña = '"+contraseña_verify+"' ")
+    if cursor.fetchall():
+        messagebox.showinfo(title="Login Correcto", message="[!] ID_Empleado y contraseña correctas")
+        app()
+    else:
+        messagebox.showerror(title="Login Incorrecto", message="[X] ID_Empleado y contraseña Incorrecta !")
+    cursor.close()
+    
+btnLogin = tk.Button(ventanaLogin, text="Logearse",fg="black", bg="green",command=verificarDatos)
+btnLogin.place(x=150, y=600, width=200, height=30)
 
-
-#Botones Inicio   
-btnIngresar = tk.Button(ventana, text="Iniciar sesion", fg="black", bg="green",command=login)#Falta agregar la accion del command
-btnIngresar.place(x=150, y=445, width=200, height=30)
-
-btnRegistrarEmpleado = tk.Button(ventana, text="Registrar Empleado",fg="black", bg="green",command=RegistrarEmpleados)
-btnRegistrarEmpleado.place(x=150, y=485, width=200, height=30)
-
-#insertar en otra ventana o donde sea convenientes es solo de pruebas
-"""btnRegistrarCliente = tk.Button(ventana, text="Registar Cliente", fg="black", bg="green",command=registarClientes)
-btnRegistrarCliente.place(x=150, y=490, width=200, height=30)
-"""
-# se agrega el boton de registrar habitacion de momento lo pondré aqui para hacer las pruebas correspondientes
-btnRegistrarHabitacion = tk.Button(ventana, text="Registar Habitación", fg="black", bg="green",command=regitrarHabitaciones)
-btnRegistrarHabitacion.place(x=150, y=530, width=200, height=30)
-
-ventana.mainloop()
-
-
+ventanaLogin.mainloop()
 
