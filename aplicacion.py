@@ -1,6 +1,5 @@
 from cProfile import label
 from distutils.util import execute
-#from curses.panel import top_panel
 from msilib.schema import TextStyle
 from multiprocessing import connection
 from pydoc import text
@@ -15,6 +14,7 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 import random, string
+from datetime import datetime
 
 db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
 cursor = db.cursor()
@@ -354,13 +354,160 @@ def regitrarHabitaciones():
             modificarTrue()
     llenarTabla()
     ventanaHabitaciones.mainloop()
+    
+def registroReservas():
+       
+   root = Tk()
+   root.geometry("1020x500")
+
+   entryregistroreservas = StringVar()
+   lblrutcliente = StringVar()
+   lblnumHabitacion = StringVar()
+   lblIdEmpleado = StringVar()
+   lblFecha = StringVar()
+
+   
+   #funciones de las reservas
+   #corregir delete
+   def delete():
+      num = tvReservas.selection()[0]
+      sql="delete from reservas where ID_reserva="+entryregistroreservas.get()
+      cursor.execute(sql)
+      db.commit()
+      tvReservas.delete(num)
+
+   #limpia la casilla id
+   def limpiar():
+         entryregistroreservas.set("")
+
+
+   def vaciar_tabla():
+      filas = tvReservas.get_children()
+      for fila in filas:
+         tvReservas.delete(fila)
+
+   def llenarTabla():
+         vaciar_tabla()
+         sql = "select * from reservas"
+         cursor.execute(sql)
+         filas=cursor.fetchall()
+         for fila ,(ID_reserva, RUT_cliente, Numero_habitacion ,ID_empleado,fecha) in enumerate(filas, start=1):
+               tvReservas.insert("", END, values=(ID_reserva, RUT_cliente, Numero_habitacion ,ID_empleado,fecha))
+
+   #sirve para selecionar y obtner valores de la tabla
+   def seleccionar(event):
+         num= tvReservas.selection()[1]
+         print(num)
+         if int(num)>0:
+               entryregistroreservas.set(tvReservas.item(num,"values")[0])
+               lblrutcliente.set(tvReservas.item(num,"values")[1])
+               lblnumHabitacion.set(tvReservas.item(num,"values")[2])
+               lblIdEmpleado.set(tvReservas.item(num,"values")[3])
+               lblFecha.set(tvReservas.item(num,"values")[4])
+   #obtiene los id empleados que existen
+   def mostraridEmpleados():
+      eje = cursor.execute('select ID_Empleado  from empleados')
+      eje = cursor.fetchall()
+      result = []
+      for row in eje:
+         result.append(row[0])
+      return result
+
+   #corregir modifica
+   def modifica():
+            #element contains the values and ref is the name of the item that we want change
+         #sql = "Update  reservas set 	ID_reserva= '{}',RUT_cliente = '{}',Numero_habitacion = '{}',ID_empleado = '{}',fecha = '{}'  where ID_reserva  = '{}'".format(element[0],element[1],element[2],element[3], ref)
+         #execute the query
+         cursor.execute(sql)
+         #miconexion.commit()
+         #guardamos cambios
+
+   #obtiene los RUT clientes que existen en la base de datos
+   def mostrarrutClientes():
+      eje = cursor.execute('select RUT_cliente from Clientes')
+      eje = cursor.fetchall()
+      result = []
+      for row in eje:
+         result.append(row[0])
+      return result
+   #obtiene los num de habitaciones que existen en la base de datos
+   def mostrarnumhabitaciones():
+      eje = cursor.execute('select Numero_habitacion from habitaciones')
+      eje = cursor.fetchall()
+      result = []
+      for row in eje:
+         result.append(row[0])
+      return result
+
+   def añadir():
+         val= [entryregistroreservas.get(),lblrutcliente.get(),lblnumHabitacion.get(),lblIdEmpleado.get(),lblFecha.get()]
+         sql= "INSERT INTO reservas (ID_reserva, RUT_cliente, Numero_habitacion, ID_empleado,fecha) VALUES ('{}','{}','{}','{}','{}')".format(val[0],val[1],val[2],val[3],val[4])
+         cursor.execute(sql)
+         llenarTabla()
+         limpiar()
+
+
+   
+   lblregistroreservas =tk.Label(root, text="Registro Reservas", fg="red", font=(None, 30)).place(x=300, y=5)
+   entryregistroreservas = Entry(root)
+   entryregistroreservas.place(x=140, y=10)
+   tk.Label(root, text="Reseva ID").place(x=10, y=10)
+
+   txtrutcliente = Label(root, text="RUT cliente").place(x=10, y=40)
+   lblrutcliente = ttk.Combobox(root, text="RUT cliente")
+   lblrutcliente['value'] = mostrarrutClientes()
+   lblrutcliente.place(x=140, y=40)
+   lblrutcliente.current(0)
+
+   txtfecha = Label(root, text="Num habitaciones").place(x=10, y=70)
+   lblnumHabitacion = ttk.Combobox(root, text="Num Habitacion")
+   lblnumHabitacion['value'] = mostrarnumhabitaciones()
+   lblnumHabitacion.place(x=140, y=70)
+   lblnumHabitacion.current(0)
+
+
+   #agregar estado habitacion
+
+   txtIdEmpleado = Label(root, text="ID empleado").place(x=10, y=100)
+   lblIdEmpleado = ttk.Combobox(root, text="ID empleado")
+   lblIdEmpleado['value'] = mostraridEmpleados()
+   lblIdEmpleado.place(x=140, y=100)
+   lblIdEmpleado.current(0)
+
+
+   txtfecha = Label(root, text="Fecha").place(x=10, y=130)
+   lblFecha = ttk.Combobox(root, text="fecha",values=[datetime.today().strftime('%Y-%m-%d')])
+   lblFecha.place(x=140, y=130)
+   lblFecha.current(0)
+
+
+
+   Button(root, text="Añadir",command = añadir,height=3, width= 13).place(x=300, y=130)
+   Button(root, text="modificar",command = modifica,height=3, width= 13).place(x=410, y=130)
+   Button(root, text="eliminar",command = delete,height=3, width= 13).place(x=520, y=130)
+   
+   cols = ('Reseva ID', 'RUT cliente', 'Num Habitacion','ID empleado','fecha')
+   tvReservas = ttk.Treeview(root, columns=cols, show='headings' )
+   
+   for col in cols:
+      tvReservas.heading(col, text=col)
+      tvReservas.grid(row=1, column=0, columnspan=2)
+      tvReservas.place(x=10, y=200)
+   
+
+   tvReservas.bind("<<TreeviewSelect>>",seleccionar)
+   
+   llenarTabla()
+
+   root.mainloop()    
+   
 
 
 #Ventana login principal!
 def app():
     ventana = tk.Tk()
     ventana.title("Hotel")
-    ventana.geometry("500x150")
+    ventana.geometry("500x200")
     ventana.configure(background="white")
     #Imagenes logos !
   
@@ -386,6 +533,9 @@ def app():
     btnRegistrarHabitacion = tk.Button(ventana, text="Registar Habitación", fg="black", bg="green",command=regitrarHabitaciones)
     btnRegistrarHabitacion.place(x=150, y=110, width=200, height=30)
 
+    btnRegistroReservas= tk.Button(ventana, text="Registar Reservas", fg="black", bg="green",command=registroReservas)
+    btnRegistroReservas.place(x=150, y=150, width=200, height=30)
+    
     ventana.mainloop()
 
 
@@ -395,10 +545,10 @@ ventanaLogin.geometry("500x640")
 ventanaLogin.configure(background="white")
 db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
 
-iconImg = tkinter.PhotoImage(file="img\imgLogin\iconLogo.png")
-lbl_img = tkinter.Label(ventanaLogin, image=iconImg).place(y=0, x=-15)
-iconTilte = tkinter.PhotoImage(file="img\imgLogin\iconTitle.png")
-lbl_Title = tkinter.Label(ventanaLogin, image=iconTilte).place(y=0, x=2)   
+#iconImg = tkinter.PhotoImage(file="img\imgLogin\iconLogo.png")
+#lbl_img = tkinter.Label(ventanaLogin, image=iconImg).place(y=0, x=-15)
+#iconTilte = tkinter.PhotoImage(file="img\imgLogin\iconTitle.png")
+#lbl_Title = tkinter.Label(ventanaLogin, image=iconTilte).place(y=0, x=2)   
 
 #Entradas Login
 idEmpleado = tk.Label(ventanaLogin, text="Ingrese ID Empleado", bg="grey", fg="black")
