@@ -315,8 +315,8 @@ def regitrarHabitaciones():
                                  
     def eliminar():
         num= tvHabitaciones.selection()[0]
-        if int(id)>0:
-            sql="delete from habitaciones where num_Habitacion="+num
+        if int(num)>0:
+            sql="delete from habitaciones where Numero_habitacion="+num
             cursor.execute(sql)
             db.commit()
             tvHabitaciones.delete(num)
@@ -371,7 +371,7 @@ def registroReservas():
    #corregir delete
    def delete():
       num = tvReservas.selection()[0]
-      sql="delete from reservas where ID_reserva="+entryregistroreservas.get()
+      sql="delete from reservas where ID_reserva= "+num
       cursor.execute(sql)
       db.commit()
       tvReservas.delete(num)
@@ -539,7 +539,7 @@ ventanaLogin = tk.Tk()
 ventanaLogin.title("Login Hotel")
 ventanaLogin.geometry("500x640")
 ventanaLogin.configure(background="white")
-db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
+
 
 iconImg = tkinter.PhotoImage(file="img\imgLogin\iconLogo.png")
 lbl_img = tkinter.Label(ventanaLogin, image=iconImg).place(y=0, x=-15)
