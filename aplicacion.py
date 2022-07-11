@@ -1,5 +1,4 @@
 from cProfile import label
-from distutils.util import execute
 from msilib.schema import TextStyle
 from multiprocessing import connection
 from pydoc import text
@@ -183,6 +182,7 @@ def RegistrarEmpleados():
             entrada2.delete(0, 'end')
             entrada3.delete(0, 'end')
             entrada4.delete(0, 'end')
+            
             messagebox.showinfo(message="Registro exitoso", title="Aviso")
         
             etiqueta0 = tk.Label(ventana2, text="ID", bg="gray", fg="white")
@@ -415,12 +415,8 @@ def registroReservas():
 
    #corregir modifica
    def modifica():
-            #element contains the values and ref is the name of the item that we want change
-         #sql = "Update  reservas set 	ID_reserva= '{}',RUT_cliente = '{}',Numero_habitacion = '{}',ID_empleado = '{}',fecha = '{}'  where ID_reserva  = '{}'".format(element[0],element[1],element[2],element[3], ref)
-         #execute the query
-         cursor.execute(sql)
-         #miconexion.commit()
-         #guardamos cambios
+       pass
+           
 
    #obtiene los RUT clientes que existen en la base de datos
    def mostrarrutClientes():
@@ -545,10 +541,10 @@ ventanaLogin.geometry("500x640")
 ventanaLogin.configure(background="white")
 db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
 
-#iconImg = tkinter.PhotoImage(file="img\imgLogin\iconLogo.png")
-#lbl_img = tkinter.Label(ventanaLogin, image=iconImg).place(y=0, x=-15)
-#iconTilte = tkinter.PhotoImage(file="img\imgLogin\iconTitle.png")
-#lbl_Title = tkinter.Label(ventanaLogin, image=iconTilte).place(y=0, x=2)   
+iconImg = tkinter.PhotoImage(file="img\imgLogin\iconLogo.png")
+lbl_img = tkinter.Label(ventanaLogin, image=iconImg).place(y=0, x=-15)
+iconTilte = tkinter.PhotoImage(file="img\imgLogin\iconTitle.png")
+lbl_Title = tkinter.Label(ventanaLogin, image=iconTilte).place(y=0, x=2)   
 
 #Entradas Login
 idEmpleado = tk.Label(ventanaLogin, text="Ingrese ID Empleado", bg="grey", fg="black")
