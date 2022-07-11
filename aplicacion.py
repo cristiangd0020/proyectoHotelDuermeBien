@@ -89,6 +89,7 @@ def registarClientes():
         telCliente.place(x=70, y=230, width=160, height=30)
         entradatelCliente = tk.Entry(ventanaRegCliente)
         entradatelCliente.place(x=240, y=230, width=200, height=30)
+        
         def nuevoRegistroCliente():
             element= [entradaRut.get(),entradaNomCliente.get(),entradaEmailCliente.get(),entradatelCliente.get()]
             sql= "INSERT INTO clientes (RUT_cliente, Nombre_cliente, Email, Telefono) VALUES ('{}','{}','{}','{}')".format(element[0],element[1],element[2],element[3])
@@ -136,36 +137,24 @@ def RegistrarEmpleados():
     
     
     etiqueta1 = tk.Label(ventana2, text="Rut Empleado", bg="gray", fg="white")
-    etiqueta1.place(x=305, y=300, width=160, height=30)
+    etiqueta1.place(x=70, y=80, width=160, height=30)
     entrada1 = tk.Entry(ventana2)
-    entrada1.place(x=280, y=340, width=200, height=30)
+    entrada1.place(x=240, y=80, width=200, height=30)
     
     etiqueta2 = tk.Label(ventana2, text="Nombre Empleado", bg="gray", fg="white")
-    etiqueta2.place(x=45, y=300, width=160, height=30)
+    etiqueta2.place(x=70, y=130, width=160, height=30)
     entrada2 = tk.Entry(ventana2)
-    entrada2.place(x=20, y=340, width=200, height=30)
+    entrada2.place(x=240, y=130, width=200, height=30)
 
     etiqueta3 = tk.Label(ventana2, text="Email", bg="gray", fg="white")
-    etiqueta3.place(x=45, y=410, width=160, height=30)
+    etiqueta3.place(x=70, y=180, width=160, height=30)
     entrada3 = tk.Entry(ventana2)
-    entrada3.place(x=20, y=450, width=200, height=30)
+    entrada3.place(x=240, y=180, width=200, height=30)
     
     etiqueta4 = tk.Label(ventana2, text="Telefono", bg="gray", fg="white")
-    etiqueta4.place(x=305, y=410, width=160, height=30)
+    etiqueta4.place(x=70, y=230, width=160, height=30)
     entrada4 = tk.Entry(ventana2)
-    entrada4.place(x=280, y=450, width=200, height=30)
-    
-    def mostrarIdContraseña():
-        db = pymysql.connect(user='root',host='localhost',password='',database='hotelduermebien')
-        cursor.execute("SELECT ID_Empleado, Contraseña FROM empleados WHERE ID_Empleado = '"+entrada0.get()+"' AND Contraseña = '"+entrada5.get()+"'")
-        filas = cursor.fetchall()
-        if (len(filas) > 0):
-            for fila in filas:
-                entrada0.insert(0, fila[0])
-                entrada5.insert(0, fila[1])
-                messagebox.showinfo(message="[!] Se ha generado una ID y una Contraseña para hacer ingreso al sistema")
-        else:
-            messagebox.showinfo(message="[X] Vaya algo ha fallado") 
+    entrada4.place(x=240, y=230, width=200, height=30)
     
     
     def Registar():
@@ -174,6 +163,20 @@ def RegistrarEmpleados():
         contraseña_empleado = generarContraseñaEmpleado(entrada5.get())
         insertarEmpleado = "INSERT INTO empleados(ID_Empleado, RUT_EMPLEADO, Nombre_empleado, Email, Telefono, Contraseña) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}')".format(id_empleado, empleado1.RUT_empleado, empleado1.Nombre_empleado, empleado1.Email, empleado1.Telefono, contraseña_empleado)
         
+        def mostrarIdContraseña():
+            cursor.execute("SELECT ID_Empleado, Contraseña FROM empleados WHERE ID_Empleado = '"+id_empleado+"' AND Contraseña = '"+contraseña_empleado+"'")
+            filas = cursor.fetchall()
+            if (len(filas) > 0):
+                for fila in filas:
+                    entrada0.delete(0, 'end')
+                    entrada5.delete(0, 'end')
+                    titulo = tk.Label(ventana2, text="Estos datos son para ingresar al sistema", fg="green", font=(NONE, 15))
+                    titulo.place(x=65, y=340, width=380, height=30)
+                    entrada0.insert(0, fila[0])
+                    entrada5.insert(0, fila[1])
+                    messagebox.showinfo(message="[!] Se ha generado una ID y una Contraseña para hacer ingreso al sistema")
+            else:
+                messagebox.showinfo(message="[X] Vaya algo ha fallado") 
         
         try:
             cursor.execute(insertarEmpleado)
@@ -186,13 +189,12 @@ def RegistrarEmpleados():
             messagebox.showinfo(message="Registro exitoso", title="Aviso")
         
             etiqueta0 = tk.Label(ventana2, text="ID", bg="gray", fg="white")
-            etiqueta0.place(x=45, y=100, width=160, height=30)
-            entrada0.place(x=20, y=140, width=200, height=30)
+            etiqueta0.place(x=45, y=380, width=160, height=30)
+            entrada0.place(x=210, y=380, width=200, height=30)
             
             etiqueta5 = tk.Label(ventana2, text="Contraseña", bg="gray", fg="white")
-            etiqueta5.place(x=305, y=100, width=160, height=30)
-            entrada5.place(x=280, y=140, width=200, height=30)
-            
+            etiqueta5.place(x=45, y=410, width=160, height=30)
+            entrada5.place(x=210, y=410, width=200, height=30)
             mostrarIdContraseña()
             db.close
         except:
