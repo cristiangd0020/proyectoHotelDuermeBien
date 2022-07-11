@@ -357,147 +357,198 @@ def regitrarHabitaciones():
     llenarTabla()
     ventanaHabitaciones.mainloop()
     
+
 def registroReservas():
-       
-   root = Tk()
-   root.geometry("1020x500")
+    
+    ventanaReservas=Toplevel()
+    ventanaReservas.title("Registro de reservas")
+    ventanaReservas.geometry("800x600")
 
-   entryregistroreservas = StringVar()
-   lblrutcliente = StringVar()
-   lblnumHabitacion = StringVar()
-   lblIdEmpleado = StringVar()
-   lblFecha = StringVar()
-
-   
-   #funciones de las reservas
-   #corregir delete
-   def delete():
-      num = tvReservas.selection()[0]
-      sql="delete from reservas where ID_reserva= "+num
-      cursor.execute(sql)
-      db.commit()
-      tvReservas.delete(num)
-
-   #limpia la casilla id
-   def limpiar():
-         entryregistroreservas.set("")
-
-
-   def vaciar_tabla():
-      filas = tvReservas.get_children()
-      for fila in filas:
-         tvReservas.delete(fila)
-
-   def llenarTabla():
-         vaciar_tabla()
-         sql = "select * from reservas"
-         cursor.execute(sql)
-         filas=cursor.fetchall()
-         for fila ,(ID_reserva, RUT_cliente, Numero_habitacion ,ID_empleado,fecha) in enumerate(filas, start=1):
-               tvReservas.insert("", END, values=(ID_reserva, RUT_cliente, Numero_habitacion ,ID_empleado,fecha))
-
-   #sirve para selecionar y obtner valores de la tabla
-   def seleccionar(event):
-         num= tvReservas.selection()[1]
-         print(num)
-         if int(num)>0:
-               entryregistroreservas.set(tvReservas.item(num,"values")[0])
-               lblrutcliente.set(tvReservas.item(num,"values")[1])
-               lblnumHabitacion.set(tvReservas.item(num,"values")[2])
-               lblIdEmpleado.set(tvReservas.item(num,"values")[3])
-               lblFecha.set(tvReservas.item(num,"values")[4])
-   #obtiene los id empleados que existen
-   def mostraridEmpleados():
-      eje = cursor.execute('select ID_Empleado  from empleados')
-      eje = cursor.fetchall()
-      result = []
-      for row in eje:
-         result.append(row[0])
-      return result
-
-   #corregir modifica
-   def modifica():
-       pass
-           
-
-   #obtiene los RUT clientes que existen en la base de datos
-   def mostrarrutClientes():
-      eje = cursor.execute('select RUT_cliente from Clientes')
-      eje = cursor.fetchall()
-      result = []
-      for row in eje:
-         result.append(row[0])
-      return result
-   #obtiene los num de habitaciones que existen en la base de datos
-   def mostrarnumhabitaciones():
-      eje = cursor.execute('select Numero_habitacion from habitaciones')
-      eje = cursor.fetchall()
-      result = []
-      for row in eje:
-         result.append(row[0])
-      return result
-
-   def añadir():
-         val= [entryregistroreservas.get(),lblrutcliente.get(),lblnumHabitacion.get(),lblIdEmpleado.get(),lblFecha.get()]
-         sql= "INSERT INTO reservas (ID_reserva, RUT_cliente, Numero_habitacion, ID_empleado,fecha) VALUES ('{}','{}','{}','{}','{}')".format(val[0],val[1],val[2],val[3],val[4])
-         cursor.execute(sql)
-         llenarTabla()
-         limpiar()
+    modificar = False
+    registro_reservas= StringVar()
+    rut_cliente= StringVar()
+    num_habitacion=StringVar()
+    id_empleado=StringVar()
+    fecha=StringVar()
+                
+    def seleccionar(event):
+        num= tvReservas.selection()[0]
+        if int(num)>0:
+            registro_reservas.set(tvReservas.item(num,"values")[0])
+            rut_cliente.set(tvReservas.item(num,"values")[1])
+            num_habitacion.set(tvReservas.item(num,"values")[2])
+            id_empleado.set(tvReservas.item(num,"values")[3])
+            fecha.set(tvReservas.item(num,"values")[4])
+            
+    marco = ttk.LabelFrame(ventanaReservas, text="Formulario de gestion Estudiantes")
+    marco.place(x=50,y=50, width=700, height=400)
 
 
-   
-   lblregistroreservas =tk.Label(root, text="Registro Reservas", fg="red", font=(None, 30)).place(x=300, y=5)
-   entryregistroreservas = Entry(root)
-   entryregistroreservas.place(x=140, y=10)
-   tk.Label(root, text="Reseva ID").place(x=10, y=10)
-
-   txtrutcliente = Label(root, text="RUT cliente").place(x=10, y=40)
-   lblrutcliente = ttk.Combobox(root, text="RUT cliente")
-   lblrutcliente['value'] = mostrarrutClientes()
-   lblrutcliente.place(x=140, y=40)
-   lblrutcliente.current(0)
-
-   txtfecha = Label(root, text="Num habitaciones").place(x=10, y=70)
-   lblnumHabitacion = ttk.Combobox(root, text="Num Habitacion")
-   lblnumHabitacion['value'] = mostrarnumhabitaciones()
-   lblnumHabitacion.place(x=140, y=70)
-   lblnumHabitacion.current(0)
-
-
-   #agregar estado habitacion
-
-   txtIdEmpleado = Label(root, text="ID empleado").place(x=10, y=100)
-   lblIdEmpleado = ttk.Combobox(root, text="ID empleado")
-   lblIdEmpleado['value'] = mostraridEmpleados()
-   lblIdEmpleado.place(x=140, y=100)
-   lblIdEmpleado.current(0)
+    def mostraridEmpleados():
+        eje = cursor.execute('select ID_Empleado  from empleados')
+        eje = cursor.fetchall()
+        result = []
+        for row in eje:
+            result.append(row[0])
+        return result
+    #obtiene los RUT clientes que existen en la base de datos
+    def mostrarrutClientes():
+        eje = cursor.execute('select RUT_cliente from Clientes')
+        eje = cursor.fetchall()
+        result = []
+        for row in eje:
+            result.append(row[0])
+        return result
+    #obtiene los num de habitaciones que existen en la base de datos
+    def mostrarnumhabitaciones():
+        eje = cursor.execute('select Numero_habitacion from habitaciones')
+        eje = cursor.fetchall()
+        result = []
+        for row in eje:
+            result.append(row[0])
+        return result
 
 
-   txtfecha = Label(root, text="Fecha").place(x=10, y=130)
-   lblFecha = ttk.Combobox(root, text="fecha",values=[datetime.today().strftime('%Y-%m-%d')])
-   lblFecha.place(x=140, y=130)
-   lblFecha.current(0)
+    #labels entry
+    lblRegReservas= Label(marco, text="Registro Reservas").grid(column=0,row=0 ,pady=5, padx=5)
+    txtRegReservas = Entry(marco, textvariable= registro_reservas)
+    txtRegReservas.grid(column=1, row=0)
 
+    lblRutCliente = Label(marco, text="rut cliente").grid(column=0,row=1, pady=5, padx=5)
+    txtRutCliente  = ttk.Combobox(marco ,textvariable= rut_cliente)
+    txtRutCliente ['value'] = mostrarrutClientes()
+    txtRutCliente .grid(column=1, row=1)
+    txtRutCliente .current(0)
 
+    lblNumHabitacion = Label(marco, text="num_habitacion").grid(column=2,row=0, pady=5, padx=5)
+    txtNumHabitacion= ttk.Combobox(marco, textvariable= num_habitacion)
+    txtNumHabitacion['value'] = mostrarnumhabitaciones()
+    txtNumHabitacion.grid(column=3, row=0)
+    txtNumHabitacion.current(0)
 
-   Button(root, text="Añadir",command = añadir,height=3, width= 13).place(x=300, y=130)
-   Button(root, text="modificar",command = modifica,height=3, width= 13).place(x=410, y=130)
-   Button(root, text="eliminar",command = delete,height=3, width= 13).place(x=520, y=130)
-   
-   cols = ('Reseva ID', 'RUT cliente', 'Num Habitacion','ID empleado','fecha')
-   tvReservas = ttk.Treeview(root, columns=cols, show='headings' )
-   
-   for col in cols:
-      tvReservas.heading(col, text=col)
-      tvReservas.grid(row=1, column=0, columnspan=2)
-      tvReservas.place(x=10, y=200)
-   
+    lblIdEmpleado = Label(marco, text="id_empleado").grid(column=2,row=1, pady=5, padx=5)
+    txtIdEmpleado = ttk.Combobox(marco, textvariable= id_empleado)
+    txtIdEmpleado['value'] = mostraridEmpleados()
+    txtIdEmpleado.grid(column=3, row=1)
+    txtIdEmpleado.current(0)
 
-   tvReservas.bind("<<TreeviewSelect>>",seleccionar)
-   
-   llenarTabla()
+    lblFecha = Label(marco, text="fecha").grid(column=4,row=0, pady=5, padx=5)
+    txtFecha=ttk.Combobox(marco, text="fecha",values=[datetime.today().strftime('%Y-%m-%d')])
+    txtFecha.grid(column=5, row=0)
+    txtFecha.current(0)
 
-   root.mainloop()    
+    lblmensaje = Label(marco, text="aqui van los mensajes", fg="green")
+    lblmensaje.grid(column=0,row=2,columnspan=4)
+
+        # tabla lista de --
+
+    tvReservas= ttk.Treeview(marco, selectmode=NONE)
+    tvReservas.grid(column=0, row=3, columnspan=6)
+    lblregistroreservas =Label(ventanaReservas, text="Registro Reservas", fg="red", font=(None, 30)).place(x=250, y=5)
+    tvReservas["columns"]=("Registro Reservas","RUT cliente", "Num habitaciones", "ID empleado","Fecha")
+    tvReservas.column('#0', width=0, stretch=NO)
+    tvReservas.column("Registro Reservas", width=150, anchor=CENTER)
+    tvReservas.column("RUT cliente", width=150, anchor=CENTER)
+    tvReservas.column("Num habitaciones", width=90, anchor=CENTER)
+    tvReservas.column("ID empleado", width=90, anchor=CENTER)
+    tvReservas.column("Fecha", width=90, anchor=CENTER)
+    tvReservas.heading('#0', text="")
+    tvReservas.heading('Registro Reservas', text='Registro Reservas', anchor=CENTER )
+    tvReservas.heading('RUT cliente', text='RUT cliente', anchor=CENTER )
+    tvReservas.heading('Num habitaciones',text='Num habitaciones', anchor=CENTER )
+    tvReservas.heading('ID empleado',text='ID empleado', anchor=CENTER)
+    tvReservas.heading('Fecha',text='Fecha', anchor=CENTER)
+    tvReservas.bind("<<TreeviewSelect>>",seleccionar)
+
+        # BOTONES DE ACCION
+    btneliminar= Button(marco, text="Eliminar", command=lambda:eliminar())
+    btneliminar.grid(column=1,row=4)
+    btnNuevo= Button(marco, text="Guardar",command=lambda:nuevo())
+    btnNuevo.grid(column=2,row=4)
+    btnModificar= Button(marco, text="Seleccionar", command=lambda:actualizarhabitaciones())
+    btnModificar.grid(column=3,row=4)
+        
+        #funciones
+    def modificarFalse():
+        global modificar
+        modificar = False
+        tvReservas.config(selectmode=NONE)
+        btnNuevo.config(text="Guardar")
+        btnModificar.config(text="Seleccionar")
+        btneliminar.config(state=DISABLED)
+                    
+    def modificarTrue():
+        global modificar
+        modificar = True
+        tvReservas.config(selectmode=BROWSE)
+        btnNuevo.config(text="Nuevo")
+        btnModificar.config(text="Modificar")
+        btneliminar.config(state=NORMAL)
+
+    def validar():
+        return len(registro_reservas.get()) and len(rut_cliente.get()) and len(num_habitacion.get()) 
+
+    def limpiar():
+        registro_reservas.set("")
+
+        
+    def vaciar_tabla():
+        filas = tvReservas.get_children()
+        for fila in filas:
+            tvReservas.delete(fila)
+
+    def llenarTabla():
+        vaciar_tabla()
+        sql = "select * from reservas"
+        cursor.execute(sql)
+        filas=cursor.fetchall()
+        for fila in filas:
+            Num= fila[0]
+            tvReservas.insert("", END, Num, text= Num, values=fila )
+                                    
+    def eliminar():
+        num= tvReservas.selection()[0]
+        if int(num)>0:
+            sql="delete from reservas where ID_reserva="+num
+            cursor.execute(sql)
+            db.commit()
+            tvReservas.delete(num)
+            lblmensaje.config(text="se ha eliminado correctamente")
+        else:
+            lblmensaje(text="Seleccione un registro para eliminar", fg="red")
+
+    def nuevo():
+        if modificar==False:
+            if validar(): 
+                val= [registro_reservas.get(),rut_cliente.get(),num_habitacion.get(),id_empleado.get(),fecha.get()]
+                sql= "INSERT INTO reservas (ID_reserva, RUT_cliente, Numero_habitacion, ID_empleado,fecha) VALUES ('{}','{}','{}','{}','{}')".format(val[0],val[1],val[2],val[3],val[4])
+                cursor.execute(sql)
+                db.commit()
+                lblmensaje.config(text="Se ha guardado un registro correctamente", fg="green")
+                llenarTabla()
+                limpiar()
+            else:
+                lblmensaje.config(text="Los campos no deben estar vacios", fg="red")
+        else:
+            modificarFalse()
+        
+
+    def actualizarhabitaciones():
+        if modificar==True:
+            sql= "UPDATE reservas SET ID_reserva='"+rut_cliente.get()+"', Numero_habitacion='"+num_habitacion.get()+"', ID_empleado='"+id_empleado.get()+"', fecha='"+fecha.get()+"' WHERE ID_reserva="+registro_reservas.get()
+
+            cursor.execute(sql)
+            db.commit()
+            lblmensaje.config(text="Se ha actualizado correctamente", fg="green")
+            llenarTabla()
+            limpiar()
+
+            lblmensaje.config(text="Los campos no deben estar vacios", fg="red")
+        else:
+            modificarTrue()
+    llenarTabla()
+    ventanaReservas.mainloop()
+
    
 
 
